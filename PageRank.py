@@ -27,30 +27,33 @@ if __name__ == '__main__':
                 "B": ["C"],
                 "C": ["B"],
                 "D": ["A", "B"],
-                "E": ["D", "F"],
+                "E": ["D", "F", "B"],
                 "F": ["B", "E"],
                 "G": ["B", "E"],
                 "H": ["B", "E"],
                 "I": ["B", "E"],
                 "J": ["E"],
                 "K": ["E"]}
+
+    # Matrix initialization
     for i, node in enumerate('ABCDEFGHIJK'):
         for j, otherNode in enumerate('ABCDEFGHIJK'):
             if len(outLinks[otherNode]) > 0 and node in outLinks[otherNode]:
                 M[i][j] = 1 / len(outLinks[otherNode])
+
     for i in range(iter_max_n):
         # TODO. Complete this part that updates r_new as described in the algorithm
-        r_new = (beta * (M@r_old)) + (1-beta) / N
+        # r_new = (beta * (M@r_old)) + (1-beta) / N
         # print(list(np.dot(M,r_old)))
-        # r_new_1 = beta * np.dot(M,r_old)
-        # r_new = r_new_1 + ((1 - np.sum(beta * r_new_1)) / N)
+        r_new_1 = beta * M@r_old
+        r_new = r_new_1 + ((1 - np.sum(r_new_1)) / N)
 
         # TODO. Terminate if the condition meets the criteria
         # That is, use the 2-norm of the difference between r_new and r_old
-        if abs(np.sum(r_new - r_old)) < epsilon:
+        if np.linalg.norm(r_new - r_old) < epsilon:
             break
         r_old = r_new
-
+    print(r_old)
     for node, rank in zip('ABCDEFGHIJK', r_new):
         print('node {}: {:.1f}%'.format(node, rank * 100))
 
